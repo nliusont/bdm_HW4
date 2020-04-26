@@ -25,8 +25,8 @@ def main(sc):
 
         # Create an R-tree index
         proj = pyproj.Proj(init="epsg:2263", preserve_units=True)    
-        boro_idx, boro = createIndex('boroughs.geojson')  
-        nei_idx, neighbo = createIndex('neighborhoods.geojson')    
+        boro_idx, boro = createIndex('hdfs:///tmp/bdm/boroughs.geojson')  
+        nei_idx, neighbo = createIndex('hdfs:///tmp/bdm/neighborhoods.geojson')    
 
         # Skip the header
         if pid==0:
@@ -89,7 +89,7 @@ def main(sc):
         return csv_lines
 
 
-    rdd = sc.textFile('tmp/bdm/yellow_tripdata_2011-05.csv')
+    rdd = sc.textFile('hdfs:///tmp/bdm/yellow_tripdata_2011-05.csv')
     counts = rdd.mapPartitionsWithIndex(processTrips) \
              .reduceByKey(lambda x,y: x+y) \
              .sortBy(lambda x: x[1]) \
