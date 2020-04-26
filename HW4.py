@@ -22,29 +22,28 @@ def processTrips(pid, records):
     import csv
     import pyproj
     import shapely.geometry as geom
+    
     # Create an R-tree index
     proj = pyproj.Proj(init="epsg:2263", preserve_units=True)    
-    boro_idx, boro = createIndex('boroughs.geojson')  
     nei_idx, neighbo = createIndex('neighborhoods.geojson')    
-
+    
     # Skip the header
     if pid==0:
         next(records)
     reader = csv.reader(records)
     counts = {}
-
+    
     for row in reader:
         try:
-            if row[9] == 'NULL':
-                continue
             pickup = geom.Point(proj(float(row[5]), float(row[6])))
-            borough = findZone(pickup, boro_idx, boro)
+            pickup_neighborhood = findZone(pickup, nei_idx, neighbo)
 
             dropoff = geom.Point(proj(float(row[9]), float(row[10])))
-            neighborhood = findZone(dropoff, nei_idx, neighbo)
+            dropoff_neighborhood = findZone(dropoff, nei_idx, neighbo)
 
-            boro_name= boro['boro_name'][borough]
-            neighbo_name = neighbo['neighborhood'][neighborhood]
+            boro_name = neighbo['borough'][pickup_neighborhood]
+            neighbo_name = neighbo['neighborhood'][dropoff_neighborhood]
+            
             combined = (boro_name, neighbo_name)
             counts[combined] = counts.get(combined, 0) + 1
         except:
