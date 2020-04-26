@@ -1,10 +1,14 @@
 
 def main(sc):
 
+    import rtree
+    import fiona.crs
+    import geopandas as gpd
+    import csv
+    import pyproj
+    import shapely.geometry as geom
+    
     def createIndex(geojson):
-        import rtree
-        import fiona.crs
-        import geopandas as gpd
         zones = gpd.read_file(geojson).to_crs(fiona.crs.from_epsg(2263))
         index = rtree.Rtree()
         for idx,geometry in enumerate(zones.geometry):
@@ -19,9 +23,6 @@ def main(sc):
         return None
 
     def processTrips(pid, records):
-        import csv
-        import pyproj
-        import shapely.geometry as geom
 
         # Create an R-tree index
         proj = pyproj.Proj(init="epsg:2263", preserve_units=True)    
@@ -98,7 +99,6 @@ def main(sc):
     sorted_counts = sort(counts)
     csv_lines = format_csv(sorted_counts)
 
-    import csv
     with open('output.csv', 'w', header=False) as f:
         wr = csv.writer(f)
         wr.writerows(csv_lines) 
