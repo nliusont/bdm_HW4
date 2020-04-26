@@ -36,12 +36,12 @@ def main(sc):
         counts = {}
 
         for row in reader:
-            if row[10] == 'NULL':
+            if row[9] == 'NULL':
                 continue
-            pickup = geom.Point(proj(float(row[6]), float(row[7])))
+            pickup = geom.Point(proj(float(row[5]), float(row[6])))
             borough = findZone(pickup, boro_idx, boro)
 
-            dropoff = geom.Point(proj(float(row[10]), float(row[11])))
+            dropoff = geom.Point(proj(float(row[9]), float(row[10])))
             neighborhood = findZone(dropoff, nei_idx, neighbo)
 
             try:
