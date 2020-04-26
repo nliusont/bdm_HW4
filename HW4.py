@@ -1,5 +1,5 @@
 
-def main(sc)
+def main(sc):
 
     def createIndex(geojson):
         import rtree
