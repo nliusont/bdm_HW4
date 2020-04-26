@@ -51,13 +51,6 @@ def processTrips(pid, records):
             pass
     return counts.items()
 
-
-
-
-with open('output.csv', 'w', header=False) as f:
-    wr = csv.writer(f)
-    wr.writerows(counts) 
-
 if __name__ == "__main__":
     sc = SparkContext()
     inputcsv = sys.argv[1]
