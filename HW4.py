@@ -53,55 +53,20 @@ def main(sc):
                 pass
         return counts.items()
 
-    def sort(counts):
-        bk_counts = [item for item in counts if item[0][0] == 'Brooklyn']
-        mn_counts = [item for item in counts if item[0][0] == 'Manhattan']
-        bx_counts = [item for item in counts if item[0][0] == 'Bronx']
-        qn_counts = [item for item in counts if item[0][0] == 'Queens']
-        si_counts = [item for item in counts if item[0][0] == 'Staten Island']
-
-        bx_counts = sorted(bx_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-        bk_counts = sorted(bk_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-        mn_counts = sorted(mn_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-        qn_counts = sorted(qn_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-        si_counts = sorted(si_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-
-        total = bx_counts + bk_counts + mn_counts + qn_counts + si_counts
-        return total
-
-    def format_csv(triplist):
-        count = 0
-        line = []
-        csv_lines = []
-        for record in triplist:
-            if count == 0:
-                line.append(record[0][0])
-                line.append(record[0][1])
-                line.append(record[1])
-                count += 1
-            else:
-                line.append(record[0][1])
-                line.append(record[1])
-                count += 1
-            if count == 3:
-                csv_lines.append(line)
-                line = []
-                count = 0
-        return csv_lines
-
 
     rdd = sc.textFile('hdfs:///tmp/bdm/yellow_tripdata_2011-05.csv')
     counts = rdd.mapPartitionsWithIndex(processTrips) \
-             .reduceByKey(lambda x,y: x+y) \
-             .sortBy(lambda x: x[1]) \
-             .collect()
-
-    sorted_counts = sort(counts)
-    csv_lines = format_csv(sorted_counts)
+                .reduceByKey(lambda x,y: x+y) \
+                .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
+                .sortBy(lambda x: x[1][1], ascending=False) \
+                .reduceByKey(lambda x,y: x+y) \
+                .sortByKey() \
+                .map(lambda x: (x[0], x[1][0], x[1][1], x[1][2], x[1][3], x[1][4], x[1][5])) \
+                .collect()
 
     with open('output.csv', 'w', header=False) as f:
         wr = csv.writer(f)
-        wr.writerows(csv_lines) 
+        wr.writerows(counts) 
 
 if __name__ == "__main__":
     from pyspark import SparkContext
