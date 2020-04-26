@@ -53,7 +53,7 @@ def main(sc):
         return counts.items()
 
 
-    rdd = sc.textFile('hdfs:///tmp/bdm/yellow.csv')
+    rdd = sc.textFile('hdfs:///tmp/bdm/yellow.csv.gz')
     counts = rdd.mapPartitionsWithIndex(processTrips) \
                 .reduceByKey(lambda x,y: x+y) \
                 .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
