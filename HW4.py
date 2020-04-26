@@ -62,6 +62,6 @@ if __name__ == "__main__":
                 .reduceByKey(lambda x,y: x+y) \
                 .sortByKey() \
                 .map(lambda x: (x[0], x[1][0], x[1][1], x[1][2], x[1][3], x[1][4], x[1][5])) \
-                .collect()
+
     counts.saveAsTextFile(sys.argv[2])
 
