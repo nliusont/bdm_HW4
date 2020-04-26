@@ -90,7 +90,7 @@ def main(sc):
         return csv_lines
 
 
-    rdd = sc.textFile('yellow_tripdata_2011-05.csv')
+    rdd = sc.textFile('hdfs:///tmp/bdm/yellow_tripdata_2011-05.csv')
     counts = rdd.mapPartitionsWithIndex(processTrips) \
              .reduceByKey(lambda x,y: x+y) \
              .sortBy(lambda x: x[1]) \
