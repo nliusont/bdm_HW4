@@ -22,35 +22,32 @@ def main(sc):
         import csv
         import pyproj
         import shapely.geometry as geom
-        
+
         # Create an R-tree index
         proj = pyproj.Proj(init="epsg:2263", preserve_units=True)    
-        boro_idx, boro = createIndex('tmp/bdm/boroughs.geojson')  
-        nei_idx, neighbo = createIndex('tmp/bdm/neighborhoods.geojson')    
-        
+        boro_idx, boro = createIndex('boroughs.geojson')  
+        nei_idx, neighbo = createIndex('neighborhoods.geojson')    
+
         # Skip the header
         if pid==0:
             next(records)
         reader = csv.reader(records)
         counts = {}
-        
+
         for row in reader:
-            if row[9] == 'NULL':
+            if row[10] == 'NULL':
                 continue
             pickup = geom.Point(proj(float(row[6]), float(row[7])))
             borough = findZone(pickup, boro_idx, boro)
-            
+
             dropoff = geom.Point(proj(float(row[10]), float(row[11])))
             neighborhood = findZone(dropoff, nei_idx, neighbo)
-            
+
             try:
-                if borough * neighborhood > 0:
-                    boro_name= boro['boro_name'][borough]
-                    neighbo_name = neighbo['neighborhood'][neighborhood]
-                    combined = (boro_name, neighbo_name)
-                    counts[combined] = counts.get(combined, 0) + 1
-                else:
-                    pass
+                boro_name= boro['boro_name'][borough]
+                neighbo_name = neighbo['neighborhood'][neighborhood]
+                combined = (boro_name, neighbo_name)
+                counts[combined] = counts.get(combined, 0) + 1
             except:
                 pass
         return counts.items()
@@ -67,7 +64,7 @@ def main(sc):
         mn_counts = sorted(mn_counts, key=lambda t: (t[1]), reverse = True)[0:3]
         qn_counts = sorted(qn_counts, key=lambda t: (t[1]), reverse = True)[0:3]
         si_counts = sorted(si_counts, key=lambda t: (t[1]), reverse = True)[0:3]
-        
+
         total = bx_counts + bk_counts + mn_counts + qn_counts + si_counts
         return total
 
@@ -108,8 +105,6 @@ def main(sc):
 
 if __name__ == "__main__":
     from pyspark import SparkContext
-    from pyspark.sql.session import SparkSession
     sc = SparkContext()
-    spark = SparkSession(sc)
     main(sc)
 
