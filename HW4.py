@@ -59,7 +59,7 @@ if __name__ == "__main__":
                 .sortBy(lambda x: x[1], ascending=False) \
                 .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
                 .reduceByKey(lambda x,y: x+y) \
-                .map(lambda x: (x[0], (x[1][0:5]))) \
+                .map(lambda x: (x[0], (x[1][0:6]))) \
                 .sortByKey() \
 
     counts.saveAsTextFile(sys.argv[2])
