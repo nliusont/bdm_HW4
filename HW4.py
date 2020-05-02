@@ -60,8 +60,8 @@ if __name__ == "__main__":
                 .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
                 .reduceByKey(lambda x,y: x+y) \
                 .map(lambda x: (x[0], (x[1][0:6]))) \
-                .sortByKey() 
-                .map(lambda x: (x[0]) + ',' + str(x[1][0]) + ',' + str(x[1][1]) + ',' + str(x[1][2]) + ',' + str(x[1][3]) + ',' + str(x[1][4]) + ',' + str(x[1][5])) \
+                .sortByKey() \
+                .map(lambda x: (x[0]) + ',' + str(x[1][0]) + ',' + str(x[1][1]) + ',' + str(x[1][2]) + ',' + str(x[1][3]) + ',' + str(x[1][4]) + ',' + str(x[1][5]))
 
     counts.saveAsTextFile(sys.argv[2])
 
