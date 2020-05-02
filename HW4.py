@@ -56,7 +56,7 @@ if __name__ == "__main__":
     rdd = sc.textFile(inputcsv)
     counts = rdd.mapPartitionsWithIndex(processTrips) \
                 .reduceByKey(lambda x,y: x+y) \
-                .sortBy(lambda x: x[1], ascending=False) \
+                .sortBy(lambda x: x[1], ascending=False, numPartitions=1) \
                 .map(lambda x: (x[0][0], (x[0][1], x[1]))) \
                 .reduceByKey(lambda x,y: x+y) \
                 .map(lambda x: (x[0], (x[1][0:6]))) \
